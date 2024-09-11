@@ -1,10 +1,41 @@
 body {
   font-family: Arial, sans-serif;
-  background-color: #f4f4f4;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #333333;
   margin: 0;
   padding: 20px;
 }
 
 h1 {
-  color: #333;
+  color: white;
+}
+
+.container{
+   width: 100vw;
+   height: 100vh;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+}
+
+.board{
+  width: 25vw;
+  height: 50vh;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+
+}
+
+.cells{
+  font-size: xxx-large;
+  width: 31%;
+  height: 32%;
+  border: solid 3px white;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
