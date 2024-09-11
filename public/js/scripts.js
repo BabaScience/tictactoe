@@ -1,7 +1,6 @@
 let cells  = document.querySelectorAll('.cells') ;
 let board = document.querySelector('.board');
-let Xturn = true ;
-let Oturn = false ;
+let turn = true ;
 let Xclass = 'x';
 let Oclass = 'o';
 
@@ -10,15 +9,16 @@ let Oclass = 'o';
 
 cells.forEach(cell => {
   cell.addEventListener('click',(e)=>{
-    if(Xturn && cell.textContent === ''){
+    if(turn && cell.textContent === ''){
         cell.innerHTML = Xclass;
-        changeTurn(Xturn)
-
+        turn = false;
+    
     }
+    else if (!turn && cell.textContent === ''){
+      cell.innerHTML = Oclass;
+      turn = true;
+  
+    }
+
   })
 })
-
-function changeTurn(bool){
-   return !bool;
-
-}
