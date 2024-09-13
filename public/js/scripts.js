@@ -1,14 +1,14 @@
-let cells  = document.querySelectorAll('.cells') ;
+let cell  = document.querySelectorAll('#cell') ;
 let board = document.querySelector('.board');
 let turn = true ;
 let Xclass = 'x';
 let Oclass = 'o';
 
-debugger
 
 
 
-cells.forEach(cell => {
+
+cell.forEach(cell => {
   cell.addEventListener('click',(e)=>{
     if(turn && cell.textContent === ''){
         cell.innerHTML = Xclass;
