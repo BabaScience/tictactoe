@@ -26,6 +26,45 @@ let result = '';
 
 
 /**
+ * Function saving the play
+ * @param {*} cell  the cell clicked
+ * @param {*} turn  boolean, if true, it's X turn, if false, it's O turn
+ */
+function addPlay(cell){
+  // 1. Add the class to the cell
+  const classToAdd = turn ? Xclass : Oclass;
+  cell.classList.add(classToAdd); // add the class to the cell
+  cell.innerHTML = classToAdd; // add the text content to the cell
+  
+  // 2. Add the cell id to the array
+  if (turn)
+    xcells.push(parseInt(cell.id))  // add the cell id to the array if it's X turn
+  else
+    ocells.push(parseInt(cell.id));  // add the cell id to the array if it's O turn
+
+  // 3. Check if the player wins
+  const isWin = checkWin(turn ? xcells : ocells);
+  if (isWin) {
+    removeCellsEventListeners();
+    let index = arrWinner.findIndex(combination => combination.every(arrayNum => turn ? xcells.includes(arrayNum) : ocells.includes(arrayNum)));
+    result = turn ? 'X wins!': 'O wins!';
+    wText.textContent = result ;
+    addColoredClassToWinningMatch(index);
+    return;
+  }
+  
+  // 4. Check if it's a draw
+  if (checkDraw()){
+    result = 'Draw !'
+    wText.textContent = result ;
+  }
+
+  // 5. Change the turn
+  turn = !turn;
+}
+
+
+/**
  * Function for coloring the winning cells
  * @param ind index of the winning combination
  * @returns void
@@ -51,8 +90,17 @@ function checkDraw(){
  * @returns boolean
  */
 function checkWin(playerCells) {
-  console.log(playerCells)
   return arrWinner.some(combination => combination.every(elem => playerCells.includes(elem)));
+}
+
+/**
+ * Function for removing the event listeners from the cells
+ * @returns void
+ */
+function removeCellsEventListeners(){
+  arrCellsBoard.forEach(cell => {
+    cell.removeEventListener('click', (e) => setCellsEventListeners, false);
+  });
 }
 
 /**
@@ -72,48 +120,15 @@ function restartEveryThing(){
   wText.textContent = '';
 }
 
+
 /**
- * Function saving the play
- * @param {*} cell  the cell clicked
- * @param {*} turn  boolean, if true, it's X turn, if false, it's O turn
+ * Function for setting the event listeners to the cells
+ * @returns void
  */
-function addPlay(cell){
-  // 1. Add the class to the cell
-  const classToAdd = turn ? Xclass : Oclass;
-  cell.classList.add(classToAdd); // add the class to the cell
-  cell.innerHTML = classToAdd; // add the text content to the cell
-  
-  // 2. Add the cell id to the array
-  if (turn)
-    xcells.push(parseInt(cell.id))  // add the cell id to the array if it's X turn
-  else
-    ocells.push(parseInt(cell.id));  // add the cell id to the array if it's O turn
-
-  // 3. Check if the player wins
-  const isWin = checkWin(turn ? xcells : ocells);
-  if (isWin) {
-    let index = arrWinner.findIndex(combination => combination.every(arrayNum => turn ? xcells.includes(arrayNum) : ocells.includes(arrayNum)));
-    result = turn ? 'X wins!': 'O wins!';
-    wText.textContent = result ;
-    addColoredClassToWinningMatch(index);
-    return;
-  }
-  
-  // 4. Check if it's a draw
-  if (checkDraw()){
-    result = 'Draw !'
-    wText.textContent = result ;
-  }
-
-  // 5. Change the turn
-  turn = !turn;
+function setCellsEventListeners(cell){
+  if(cell.textContent != '') return // if the cell is already filled, return
+  else addPlay(cell); // if the cell is not filled, add the play
 }
-
-
-/**
- * List to Restart button click event
- */
-restartBtn.addEventListener('click', restartEveryThing)
 
 
 /**
@@ -122,13 +137,22 @@ restartBtn.addEventListener('click', restartEveryThing)
   */
 function startNewGame() {
   arrCellsBoard.forEach(cell => {
-    cell.addEventListener('click', (e) => {
-      // 1. Check if the cell is already filled
-      if(cell.textContent != '') return // if the cell is already filled, return
-      else addPlay(cell); // if the cell is not filled, add the play
-    });
-  });
+    cell.addEventListener('click', (e) => setCellsEventListeners(cell));
+  })
 }
+
+
+
+
+
+
+/**
+ * List to Restart button click event
+ */
+restartBtn.addEventListener('click', restartEveryThing);
+
+
+
 
 
 startNewGame();
