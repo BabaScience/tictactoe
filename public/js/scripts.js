@@ -4,8 +4,11 @@ let Xclass = `x`;
 let Oclass = 'o';
 let c = 0;
 let wText = document.querySelector('.winning-text');
-let arrCellsBoard = Array.from(document.querySelectorAll('[data-cell]'))
-let restartBtn = document.getElementById('restart-btn');
+let arrCellsBoard = Array.from(document.querySelectorAll('[data-cell]'));
+let timerElement = document.getElementById('timer');
+let timer = parseInt(timerElement.innerText);
+let timerEventListener 
+
 
 let xcells = []; // Array of cells with id "X"
 let ocells = []; // Array of cells with id "O"
@@ -45,7 +48,19 @@ function addPlay(cell){
   // 3. Check if the player wins
   const isWin = checkWin(turn ? xcells : ocells);
   if (isWin) {
-    removeCellsEventListeners();
+   timerEventListener = setInterval(()=>{
+      timerElement.innerText = timer;
+      if(timer <= 0 ){
+        timerEventListener.clear();
+        timer = 3;
+        timerElement.innerText=timer;
+      }
+      timer--;
+        },1000)
+    setTimeout( ()=> {
+      restartEveryThing()
+    },3000);
+
     let index = arrWinner.findIndex(combination => combination.every(arrayNum => turn ? xcells.includes(arrayNum) : ocells.includes(arrayNum)));
     result = turn ? 'X wins!': 'O wins!';
     wText.textContent = result ;
@@ -55,6 +70,9 @@ function addPlay(cell){
   
   // 4. Check if it's a draw
   if (checkDraw()){
+    setTimeout( ()=> {
+      restartEveryThing()
+    },3000);
     result = 'Draw !'
     wText.textContent = result ;
   }
@@ -83,6 +101,9 @@ function addColoredClassToWinningMatch(ind){
 function checkDraw(){
   return arrCellsBoard.every(cell => cell.classList.contains(Xclass) || cell.classList.contains(Oclass))
 }
+
+
+
 
 /**
  * Function for checking winning combinations
@@ -146,10 +167,7 @@ function startNewGame() {
 
 
 
-/**
- * List to Restart button click event
- */
-restartBtn.addEventListener('click', restartEveryThing);
+
 
 
 
