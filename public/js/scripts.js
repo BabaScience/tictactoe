@@ -1,18 +1,16 @@
-let cell = document.querySelectorAll('#cell');
-let board = document.querySelector('.board');
-let turn = true;
+let board = document.querySelector('#board');
+let turn = true; // if true, it's X turn, if false, it's O turn
 let Xclass = `x`;
 let Oclass = 'o';
 let c = 0;
 let wText = document.querySelector('.winning-text');
-let cellsBoard = board.children;
-let arrCellsBoard = [...cellsBoard];
+let arrCellsBoard = Array.from(document.querySelectorAll('[data-cell]'))
 let restartBtn = document.getElementById('restart-btn');
 
-let xcells = [];
-let ocells = [];
+let xcells = []; // Array of cells with id "X"
+let ocells = []; // Array of cells with id "O"
 
-// Winning chains
+// Winning combinations
 let arrWinner = [
   [0, 1, 2],
   [3, 4, 5],
@@ -27,89 +25,110 @@ let arrWinner = [
 let result = '';
 
 
-cell.forEach(element => {
-  element.id = c;
-  c++;
-});
-
-
-restartBtn.addEventListener('click',function(){
-  cell.forEach(cell => {
-    cell.classList.remove(Xclass, Oclass,'winnerCells');
-    cell.textContent = '';
-  });
-  xcells = [];
-  ocells = [];
-  wText = '';
-
-})
-
-function checkWin(playerCells) {
-
-  return arrWinner.some(combination => combination.every(elem => playerCells.includes(elem)));
+/**
+ * Function for coloring the winning cells
+ * @param ind index of the winning combination
+ * @returns void
+ */
+function addColoredClassToWinningMatch(ind){
+  arrCellsBoard[arrWinner[ind][0]].classList.add('winner-cells');
+  arrCellsBoard[arrWinner[ind][1]].classList.add('winner-cells');
+  arrCellsBoard[arrWinner[ind][2]].classList.add('winner-cells');
 }
 
+
+/**
+ * Check if the game is draw
+ * @returns boolean
+ */
 function checkDraw(){
   return arrCellsBoard.every(cell => cell.classList.contains(Xclass) || cell.classList.contains(Oclass))
 }
 
+/**
+ * Function for checking winning combinations
+ * @param playerCells Array of player cells
+ * @returns boolean
+ */
+function checkWin(playerCells) {
+  console.log(playerCells)
+  return arrWinner.some(combination => combination.every(elem => playerCells.includes(elem)));
+}
 
-function colorCell(ind){
-  arrCellsBoard[arrWinner[ind][0]].classList.add('winnerCells');
-  arrCellsBoard[arrWinner[ind][1]].classList.add('winnerCells');
-  arrCellsBoard[arrWinner[ind][2]].classList.add('winnerCells');
+/**
+ * Function for resetting everything
+ * @returns void
+ */
+function restartEveryThing(){
+  // remove the added classes and text content
+  arrCellsBoard.forEach(cell => {
+    cell.classList.remove(Xclass, Oclass, 'winner-cells'); // remove the added classes
+    cell.textContent = ''; // remove the text content
+  });
+  // reset the arrays
+  xcells = [];
+  ocells = [];
+  // reset the winning text
+  wText.textContent = '';
+}
+
+/**
+ * Function saving the play
+ * @param {*} cell  the cell clicked
+ * @param {*} turn  boolean, if true, it's X turn, if false, it's O turn
+ */
+function addPlay(cell){
+  // 1. Add the class to the cell
+  const classToAdd = turn ? Xclass : Oclass;
+  cell.classList.add(classToAdd); // add the class to the cell
+  cell.innerHTML = classToAdd; // add the text content to the cell
+  
+  // 2. Add the cell id to the array
+  if (turn)
+    xcells.push(parseInt(cell.id))  // add the cell id to the array if it's X turn
+  else
+    ocells.push(parseInt(cell.id));  // add the cell id to the array if it's O turn
+
+  // 3. Check if the player wins
+  const isWin = checkWin(turn ? xcells : ocells);
+  if (isWin) {
+    let index = arrWinner.findIndex(combination => combination.every(arrayNum => turn ? xcells.includes(arrayNum) : ocells.includes(arrayNum)));
+    result = turn ? 'X wins!': 'O wins!';
+    wText.textContent = result ;
+    addColoredClassToWinningMatch(index);
+    return;
+  }
+  
+  // 4. Check if it's a draw
+  if (checkDraw()){
+    result = 'Draw !'
+    wText.textContent = result ;
+  }
+
+  // 5. Change the turn
+  turn = !turn;
 }
 
 
+/**
+ * List to Restart button click event
+ */
+restartBtn.addEventListener('click', restartEveryThing)
 
 
-
-cell.forEach(cell => {
-  cell.addEventListener('click', (e) => {
-
-    if(cell.textContent != '') return
-
-    if (turn && cell.textContent === '') {
-      cell.classList.add(Xclass);
-      cell.innerHTML = Xclass;
-      xcells.push(parseInt(cell.id)); 
-
-      
-      if (checkWin(xcells)) {
-        let index = arrWinner.findIndex(combination => combination.every(arrayNum => xcells.includes(arrayNum)));
-        result = 'X wins!';
-        wText.textContent = result ;
-        colorCell(index);
-        return;
-      }
-
-
-      if (checkDraw()){
-        result = 'Draw !'
-        wText.textContent = result ;
-      }
-      turn = false;
-
-    } else if (!turn && cell.textContent === '') {
-        cell.classList.add(Oclass);
-        cell.innerHTML = Oclass;
-        ocells.push(parseInt(cell.id)); 
-
-     
-      if (checkWin(ocells)) {
-        let index = arrWinner.findIndex(combination => combination.every(arrayNum => ocells.includes(arrayNum)));
-        result = 'O wins!';
-        wText.textContent = result ;
-        colorCell(index);
-        return;
-      }
-
-      if (checkDraw()){
-        result = 'Draw !'
-        wText.textContent = result ;
-      }
-
-      turn = true;
-    }
+/**
+  * Start a new game
+  * @returns void
+  */
+function startNewGame() {
+  arrCellsBoard.forEach(cell => {
+    cell.addEventListener('click', (e) => {
+      // 1. Check if the cell is already filled
+      if(cell.textContent != '') return // if the cell is already filled, return
+      else addPlay(cell); // if the cell is not filled, add the play
+    });
   });
-});
+}
+
+
+startNewGame();

@@ -87,7 +87,7 @@ h1 {
   color: #ffffff;
 }
 
-.winnerCells{
+.winner-cells{
   width: 120px;
   height: 120px;
   display: flex;
