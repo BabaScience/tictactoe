@@ -1,8 +1,8 @@
 let cell  = document.querySelectorAll('#cell') ;
 let board = document.querySelector('.board');
 let turn = true ;
-let Xclass = 'x';
-let Oclass = 'o';
+let Xclass = 'X';
+let Oclass = 'O';
 
 
 
