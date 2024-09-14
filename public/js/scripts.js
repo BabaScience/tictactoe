@@ -31,16 +31,14 @@ cell.forEach(element => {
   c++;
 });
 
+
 function checkWin(playerCells) {
   return arrWinner.some(combination => combination.every(elem => playerCells.includes(elem)));
 }
 
-
-/// Bug to fix
-function checkDraw(board){
-  return board.every(cell => cell.classList.contains(Xclass) || cell.classList.contains(Oclass))
+function checkDraw(){
+  return arrCellsBoard.every(cell => cell.classList.contains(Xclass) || cell.classList.contains(Oclass))
 }
-
 
 function resetBoard() {
   cell.forEach(cell => {
@@ -50,6 +48,7 @@ function resetBoard() {
   xcells = [];
   ocells = [];
 }
+
 
 cell.forEach(cell => {
   cell.addEventListener('click', (e) => {
@@ -68,6 +67,11 @@ cell.forEach(cell => {
         resetBoard()
       }
 
+      if (checkDraw()){
+        console.log('Draw !');
+        resetBoard();
+      }
+
       turn = false;
 
     } else if (!turn && cell.textContent === '') {
@@ -82,6 +86,11 @@ cell.forEach(cell => {
         console.log(result); 
         resetBoard()
         
+      }
+
+      if (checkDraw()){
+        console.log('Draw !');
+        resetBoard();
       }
 
       turn = true;
