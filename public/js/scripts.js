@@ -4,7 +4,7 @@ let turn = true;
 let Xclass = `x`;
 let Oclass = 'o';
 let c = 1;
-
+let wText = document.querySelector('.winning-text');
 let cellsBoard = board.children;
 let arrCellsBoard = [...cellsBoard]
 
@@ -33,6 +33,7 @@ cell.forEach(element => {
 
 
 function checkWin(playerCells) {
+
   return arrWinner.some(combination => combination.every(elem => playerCells.includes(elem)));
 }
 
@@ -49,6 +50,12 @@ function resetBoard() {
   ocells = [];
 }
 
+function colorCell(ind){
+  arrCellsBoard[arrWinner[ind][0]].classList.add('winnerCells');
+  arrCellsBoard[arrWinner[ind][1]].classList.add('winnerCells');
+  arrCellsBoard[arrWinner[ind][2]].classList.add('winnerCells');
+}
+
 
 cell.forEach(cell => {
   cell.addEventListener('click', (e) => {
@@ -62,9 +69,13 @@ cell.forEach(cell => {
 
       
       if (checkWin(xcells)) {
+
+        let index = arrWinner.findIndex(combination => combination.every(arrayNum => xcells.includes(arrayNum)));
         result = 'X wins!';
-        console.log(result);
-        resetBoard()
+        wText.textContent = result ;
+        colorCell(index)
+
+      
       }
 
       if (checkDraw()){
