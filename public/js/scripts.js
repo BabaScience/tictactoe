@@ -6,6 +6,7 @@ let c = 0;
 let wText = document.querySelector('.winning-text');
 let arrCellsBoard = Array.from(document.querySelectorAll('[data-cell]'));
 let timerElement = document.getElementById('timer');
+const timerMessageElement = document.getElementById('timer-message');
 let timer = parseInt(timerElement.innerText);
 let timerEventListener 
 
@@ -48,18 +49,7 @@ function addPlay(cell){
   // 3. Check if the player wins
   const isWin = checkWin(turn ? xcells : ocells);
   if (isWin) {
-   timerEventListener = setInterval(()=>{
-      timerElement.innerText = timer;
-      if(timer <= 0 ){
-        timerEventListener.clear();
-        timer = 3;
-        timerElement.innerText=timer;
-      }
-      timer--;
-        },1000)
-    setTimeout( ()=> {
-      restartEveryThing()
-    },3000);
+    showTimerToRestartGame()
 
     let index = arrWinner.findIndex(combination => combination.every(arrayNum => turn ? xcells.includes(arrayNum) : ocells.includes(arrayNum)));
     result = turn ? 'X wins!': 'O wins!';
@@ -70,15 +60,30 @@ function addPlay(cell){
   
   // 4. Check if it's a draw
   if (checkDraw()){
-    setTimeout( ()=> {
-      restartEveryThing()
-    },3000);
+    showTimerToRestartGame()
     result = 'Draw !'
     wText.textContent = result ;
   }
 
   // 5. Change the turn
   turn = !turn;
+}
+
+/**
+ * Function for showing the timer to restart the game
+ * @returns void
+ */
+function showTimerToRestartGame() {
+  timerMessageElement.style.display = 'block';
+  timerEventListener = setInterval(()=>{
+    if(timer <= 0) {
+      clearInterval(timerEventListener);
+      restartEveryThing();
+      return;
+    }
+    timer--;
+    timerElement.innerText = timer;
+  },1000)
 }
 
 
@@ -129,6 +134,9 @@ function removeCellsEventListeners(){
  * @returns void
  */
 function restartEveryThing(){
+  timerMessageElement.style.display = 'none';
+  timer = 3
+  timerElement.innerText = timer;
   // remove the added classes and text content
   arrCellsBoard.forEach(cell => {
     cell.classList.remove(Xclass, Oclass, 'winner-cells'); // remove the added classes
@@ -164,9 +172,7 @@ function startNewGame() {
 
 
 
-
-
-
+timerMessageElement.style.display = 'none';
 
 
 
